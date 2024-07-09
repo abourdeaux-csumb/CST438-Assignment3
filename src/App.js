@@ -9,6 +9,7 @@ import {StudentLayout, StudentHome} from './components/student/StudentLayout';
 import ScheduleView from './components/student/ScheduleView';
 import Transcript from './components/student/Transcript';
 import StudentAssignmentsView from './components/student/AssignmentsStudentView';
+import CourseEnroll from './components/student/CourseEnroll';
 import InstructorLayout from './components/instructor/InstructorLayout';
 import InstructorHome from './components/instructor/InstructorHome';
 import AssignmentsView from './components/instructor/AssignmentsView';
