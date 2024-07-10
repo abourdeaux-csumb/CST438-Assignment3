@@ -1,5 +1,8 @@
+
+
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { handleSave } from './AssignmentUpdate'; // Import handleSave function
 
 // complete the code.
 // instructor adds an assignment to a section
@@ -23,23 +26,16 @@ const AssignmentAdd = (props) => {
         setMessage('');
     };
 
-    const handleSave = async () => {
+    const saveAssignment = async () => {
         const assignment = { title, dueDate };
         try {
-            const response = await fetch(`${SERVER_URL}/assignments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(assignment),
-            });
-            if (response.ok) {
+            const result = await handleSave(assignment, 'POST');
+            if (result.success) {
                 setMessage('Assignment added successfully');
-                props.save(assignment); // Assuming props.save will update the parent component's state
+                props.save(assignment);
                 handleClose();
             } else {
-                const rc = await response.json();
-                setMessage(rc.message);
+                setMessage(result.message);
             }
         } catch (err) {
             setMessage('Network error: ' + err);
@@ -80,7 +76,7 @@ const AssignmentAdd = (props) => {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} color="primary">
+                    <Button onClick={saveAssignment} color="primary">
                         Save
                     </Button>
                 </DialogActions>

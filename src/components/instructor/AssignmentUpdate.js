@@ -2,11 +2,31 @@ import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { SERVER_URL } from '../../Constants';
 
-
-//  instructor updates assignment title, dueDate 
+//  instructor updates assignment title, dueDate
 //  use an mui Dialog
 //  issue PUT to URL  /assignments with updated assignment
 
+export const handleSave = async (assignment, method) => {
+    const url = `${SERVER_URL}/assignments`;
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(assignment),
+        });
+
+        if (response.ok) {
+            return { success: true };
+        } else {
+            const errorData = await response.json();
+            return { success: false, message: errorData.message };
+        }
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+};
 
 const AssignmentUpdate = (props) => {
     const { assignment, save } = props;
@@ -24,26 +44,15 @@ const AssignmentUpdate = (props) => {
         setMessage('');
     };
 
-    const handleSave = async () => {
+    const handleUpdateSave = async () => {
         const updatedAssignment = { ...assignment, title, dueDate };
-        try {
-            const response = await fetch(`${SERVER_URL}/assignments`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedAssignment),
-            });
-            if (response.ok) {
-                setMessage('Assignment updated successfully');
-                save(updatedAssignment); // Assuming save will update the parent component's state
-                handleClose();
-            } else {
-                const json = await response.json();
-                setMessage(json.message);
-            }
-        } catch (err) {
-            setMessage('Network error: ' + err);
+        const result = await handleSave(updatedAssignment, 'PUT');
+        if (result.success) {
+            setMessage('Assignment updated successfully');
+            save(updatedAssignment);
+            handleClose();
+        } else {
+            setMessage(result.message);
         }
     };
 
@@ -81,7 +90,7 @@ const AssignmentUpdate = (props) => {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} color="primary">
+                    <Button onClick={handleUpdateSave} color="primary">
                         Save
                     </Button>
                 </DialogActions>
