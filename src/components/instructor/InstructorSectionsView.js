@@ -13,16 +13,24 @@ const InstructorSectionsView = (props) => {
         setSearch({...search, [event.target.name]: event.target.value});
     }
 
-    const fetchSections = useCallback(async () => {
-        if (search.year==='' || search.semester==='') {
+    const fetchSections = async () => {
+        if (search.year === '' || search.semester === '') {
             setMessage("Enter search parameters");
         } else {
             try {
-                const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${search.year}&semester=${search.semester}`);
+                const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${search.year}&semester=${search.semester}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
                 if (response.ok) {
+                    console.log("No error");
                     const data = await response.json();
                     setSections(data);
                 } else {
+                    console.log("error");
                     const rc = await response.json();
                     setMessage(rc.message);
                 }
@@ -30,7 +38,8 @@ const InstructorSectionsView = (props) => {
                 setMessage("network error: "+err);
             }
         }
-    }, [search.year, search.semester]); // useCallback ends here
+    }
+
 
     useEffect(() => {
         fetchSections();
