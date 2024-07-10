@@ -7,7 +7,7 @@ import React, {useState} from 'react';
 
 // display a table with columns  Course Id, Assignment Title, Assignment DueDate, Score
 
-const AssignmentsStudentView = (props) => {
+const StudentAssignmentsView = (props) => {
     
      
     return(
@@ -17,4 +17,4 @@ const AssignmentsStudentView = (props) => {
     );
 }
 
-export default AssignmentsStudentView;
+export default StudentAssignmentsView;
