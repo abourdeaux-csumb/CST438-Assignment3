@@ -11,9 +11,7 @@ export const handleSave = async (assignment, method) => {
     try {
         const response = await fetch(url, {
             method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(assignment),
         });
 
@@ -33,6 +31,7 @@ const AssignmentUpdate = (props) => {
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState(assignment.title);
     const [dueDate, setDueDate] = useState(assignment.dueDate);
+    const [sectionNo, setSectionNo] = useState(assignment.sectionNo);
     const [message, setMessage] = useState('');
 
     const handleClickOpen = () => {
@@ -45,7 +44,7 @@ const AssignmentUpdate = (props) => {
     };
 
     const handleUpdateSave = async () => {
-        const updatedAssignment = { ...assignment, title, dueDate };
+        const updatedAssignment = { ...assignment, title, dueDate, sectionNo };
         const result = await handleSave(updatedAssignment, 'PUT');
         if (result.success) {
             setMessage('Assignment updated successfully');
@@ -58,41 +57,18 @@ const AssignmentUpdate = (props) => {
 
     return (
         <div>
-            <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
-                Edit
-            </Button>
+            <Button variant="outlined" color="secondary" onClick={handleClickOpen}>Edit</Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Edit Assignment</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="title"
-                        label="Title"
-                        type="text"
-                        fullWidth
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="dueDate"
-                        label="Due Date"
-                        type="date"
-                        fullWidth
-                        InputLabelProps={{ shrink: true }}
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                    />
+                    <TextField autoFocus margin="dense" id="sectionNo" label="Section No" type="text" fullWidth value={sectionNo} onChange={(e) => setSectionNo(e.target.value)} />
+                    <TextField autoFocus margin="dense" id="title" label="Title" type="text" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <TextField margin="dense" id="dueDate" label="Due Date" type="date" fullWidth InputLabelProps={{ shrink: true }} value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
                     {message && <p>{message}</p>}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleUpdateSave} color="primary">
-                        Save
-                    </Button>
+                    <Button onClick={handleClose} color="primary">Cancel</Button>
+                    <Button onClick={handleUpdateSave} color="primary">Save</Button>
                 </DialogActions>
             </Dialog>
         </div>
