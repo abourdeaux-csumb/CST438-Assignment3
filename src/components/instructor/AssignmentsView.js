@@ -18,10 +18,6 @@ const AssignmentsView = () => {
     const [assignments, setAssignments] = useState([]);
     const [message, setMessage] = useState('');
 
-    useEffect(() => {
-        fetchAssignments();
-    }, []);
-
     const fetchAssignments = async () => {
         try {
             const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`);
@@ -36,6 +32,10 @@ const AssignmentsView = () => {
             setMessage("Network error: " + err);
         }
     };
+
+    useEffect(() => {
+        fetchAssignments();
+    }, []);
 
     const deleteAssignment = async (assignmentId) => {
         try {
@@ -80,7 +80,7 @@ const AssignmentsView = () => {
                                 <Button variant="contained" color="primary" onClick={() => {/* navigate to grade page */}}>
                                     Grade
                                 </Button>
-                                <Button variant="contained" color="secondary" onClick={() => {/* navigate to edit page */}}>
+                                <Button variant="contained" color="secondary" onClick={() => {/* open update dialog */}}>
                                     Edit
                                 </Button>
                                 <Button variant="contained" color="error" onClick={() => deleteAssignment(assignment.assignmentId)}>
