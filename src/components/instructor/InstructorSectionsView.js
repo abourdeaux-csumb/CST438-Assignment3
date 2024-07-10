@@ -14,17 +14,17 @@ const InstructorSectionsView = (props) => {
     }
 
     const fetchSections = async () => {
-        if (search.year==='' || search.semester==='') {
+        if (search.year === '' || search.semester === '') {
             setMessage("Enter search parameters");
         } else {
             try {
-                const response = await fetch(${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${search.year}&semester=${search.semester},
-                 {
-                   method: 'GET',
-                   headers: {
-                     'Content-Type': 'application/json'
-                   },
-                 });
+                const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${search.year}&semester=${search.semester}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
                 if (response.ok) {
                     console.log("No error");
                     const data = await response.json();
@@ -39,6 +39,7 @@ const InstructorSectionsView = (props) => {
             }
         }
     }
+
 
     useEffect(() => {
         fetchSections();
