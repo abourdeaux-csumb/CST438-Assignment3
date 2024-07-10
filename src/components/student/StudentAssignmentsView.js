@@ -47,7 +47,6 @@ const StudentAssignmentsView = (props) => {
                     <input type="text" name="semester" onChange={handleSearchChange}/>
                 </div>
                 <br/>
-                <button onClick={fetchAssignments}>Get Assignments</button>
             </div>
             <br/>
             <table className="Center">

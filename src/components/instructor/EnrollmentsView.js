@@ -22,47 +22,45 @@ const EnrollmentsView = (props) => {
         setSearch({...search, [event.target.name]: event.target.value});
     }
 
-    const onGradeChange = async (event, enrollmentId) => {
-        const newGrade = event.target.value;
-        try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments/${enrollmentId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ grade: newGrade }),
-            });
+    const onGradeChange = async () => {
+        for (const e of enrollments) {
+            try {
+                const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments/${e.enrollmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ grade: e.grade }),
+                });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error:', error);
             }
-
-            // Refresh the enrollments
-            fetchEnrollments();
-        } catch (error) {
-            console.error('Error:', error);
         }
+
+        // Refresh the enrollments
+        fetchEnrollments();
+    };
+
+
+const fetchEnrollments = useCallback(async () => {
+    try {
+        const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`);
+        if (response.ok) {
+            const data = await response.json();
+            setEnrollments(data);
+        } else {
+            const rc = await response.json();
+            setMessage(rc.message);
+        }
+    } catch(err) {
+        setMessage("network error: "+err);
     }
+}, [secNo]); // useCallback ends here
 
-
-    const fetchEnrollments = useCallback(async () => {
-    if (search.year==='' || search.semester==='') {
-        setMessage("Enter search parameters");
-    } else {
-        try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`);
-            if (response.ok) {
-                const data = await response.json();
-                setEnrollments(data);
-            } else {
-                const rc = await response.json();
-                setMessage(rc.message);
-            }
-        } catch(err) {
-            setMessage("network error: "+err);
-            }
-        }
-    }, [secNo]); // useCallback ends here
 
     useEffect(() => {
         fetchEnrollments();
@@ -70,8 +68,6 @@ const EnrollmentsView = (props) => {
 
     return(
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <h1>Instructor Home</h1>
-            <div>{message}</div>
             <br/>
             <h3>{courseId}-{secId} Enrollments</h3>
             <table className="Center" >
@@ -92,6 +88,7 @@ const EnrollmentsView = (props) => {
                     ))}
                 </tbody>
             </table>
+            <p style={{color: 'blue', cursor: 'pointer'}} onClick={onGradeChange}>Save Grades</p>
         </div>
     );
 }
