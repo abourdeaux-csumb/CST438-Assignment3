@@ -41,7 +41,6 @@ const AssignmentGrade = ({ assignmentId, onClose }) => {
 
     const saveGrades = async () => {
         try {
-            console.log("Sending grades to save:", grades);
             const response = await fetch(`${SERVER_URL}/grades`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
