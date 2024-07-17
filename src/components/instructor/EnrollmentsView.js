@@ -13,7 +13,7 @@ const EnrollmentsView = (props) => {
     const {secNo, courseId, secId} = location.state;
 
     const fetchEnrollments = async () => {
-        
+
         if (!secNo) return;
         try {
             const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`);
@@ -36,12 +36,12 @@ const EnrollmentsView = (props) => {
     const saveGrades = async () => {
         try {
             const response = await fetch (
-                `${SERVER_URL}/enrollments`, 
+                `${SERVER_URL}/enrollments`,
                 {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                }, 
+                },
                 body: JSON.stringify(enrollments),
                 });
             if (response.ok) {
@@ -50,7 +50,7 @@ const EnrollmentsView = (props) => {
             } else {
                 const rc = await response.json();
                 setMessage(rc.message);
-            } 
+            }
         } catch (err) {
             setMessage("network error: "+err);
         }
@@ -60,20 +60,20 @@ const EnrollmentsView = (props) => {
         const copy_enrollments = enrollments.map((x) => x);
         const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
         copy_enrollments[row_idx] = {...(copy_enrollments[row_idx]), grade: e.target.value};
-        setEnrollments(copy_enrollments);      
+        setEnrollments(copy_enrollments);
     }
 
     const headers = ['enrollment id', 'student id', 'name', 'email', 'grade'];
-     
+
     return(
-        <> 
-            <h3>{message}</h3>   
-            
-            { enrollments.length > 0 && 
-                <> 
-                    <h3> {courseId}-{secId} Enrollments</h3>   
-                    
-                    <table className="Center" > 
+        <>
+            <h3>{message}</h3>
+
+            { enrollments.length > 0 &&
+                <>
+                    <h3> {courseId}-{secId} Enrollments</h3>
+
+                    <table className="Center" >
                         <thead>
                         <tr>
                             {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
@@ -91,7 +91,8 @@ const EnrollmentsView = (props) => {
                             ))}
                         </tbody>
                     </table>
-                    <Button onClick={saveGrades}>Save Grades</Button>
+                    <Button onClick={saveGrades} id="saveGradesButton">Save Grades</Button>
+
                 </>
             }
         </>

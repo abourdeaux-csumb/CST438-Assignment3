@@ -114,16 +114,16 @@ const AssignmentsView = (props) => {
     }
 
     const headers = ['id', 'Title', 'Due Date', '', '', ''];
-     
-    return(
-        <div> 
-            <h3>{message}</h3>   
 
-            { assignments.length > 0 && 
-                <> 
-                    <h3>{courseId}-{secId} Assignments</h3>   
-                    
-                    <table className="Center" > 
+    return(
+        <div>
+            <h3 id="message">{message}</h3>
+
+            { assignments.length > 0 &&
+                <>
+                    <h3>{courseId}-{secId} Assignments</h3>
+
+                    <table className="Center" >
                         <thead>
                         <tr>
                             {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
@@ -131,20 +131,19 @@ const AssignmentsView = (props) => {
                         </thead>
                         <tbody>
                         {assignments.map((a) => (
-                                <tr key={a.id}>
+                            <tr key={a.id}>
                                 <td>{a.id}</td>
                                 <td>{a.title}</td>
                                 <td>{a.dueDate}</td>
                                 <td><AssignmentGrade assignment={a} /></td>
                                 <td><AssignmentUpdate assignment={a} save={save} /></td>
-                                <td><Button onClick={onDelete}>Delete</Button></td>
-                                </tr>
-                            ))}
+                                <td><Button onClick={onDelete} id={`deleteButton-${a.id}`}>Delete</Button></td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </>
             }
-
             <AssignmentAdd save={add} />
         </div>
     );

@@ -4,14 +4,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import {SERVER_URL} from '../../Constants';
+import { SERVER_URL } from '../../Constants';
 
 const AssignmentGrade = (props) => {
 
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
     const [grades, setGrades] = useState([]);
-
 
     const editOpen = () => {
         setOpen(true);
@@ -30,20 +29,19 @@ const AssignmentGrade = (props) => {
                 setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("network error "+err);
+            setMessage("network error " + err);
         }
     }
 
     const onSave = async () => {
-        try { 
-            const response = await fetch (`${SERVER_URL}/grades`, 
-                {
+        try {
+            const response = await fetch(`${SERVER_URL}/grades`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                }, 
+                },
                 body: JSON.stringify(grades),
-                });
+            });
             if (response.ok) {
                 setMessage("Grades saved");
             } else {
@@ -51,7 +49,7 @@ const AssignmentGrade = (props) => {
                 setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("network error "+err);
+            setMessage("network error " + err);
         }
     }
 
@@ -64,43 +62,43 @@ const AssignmentGrade = (props) => {
     const onChange = (e) => {
         const copy_grades = grades.map((x) => x);
         const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
-        copy_grades[row_idx] = {...(copy_grades[row_idx]), score: e.target.value};
-        setGrades(copy_grades);   
+        copy_grades[row_idx] = { ...(copy_grades[row_idx]), score: e.target.value };
+        setGrades(copy_grades);
     }
 
-    const headers = ['gradeId', 'student name', 'student email', 'score' ];
-     
-    return(
+    const headers = ['gradeId', 'student name', 'student email', 'score'];
+
+    return (
         <>
-            <Button onClick={editOpen}>Grade</Button>
+            <Button onClick={editOpen} id="gradeButton">Grade</Button>
             <Dialog open={open} >
                 <DialogTitle>Grade Assignment</DialogTitle>
-                <DialogContent  style={{paddingTop: 20}} >
-                    <h4>{message}</h4>
-                    <table className="Center" > 
+                <DialogContent style={{ paddingTop: 20 }} >
+                    <h4 id="message">{message}</h4>
+                    <table className="Center">
                         <thead>
-                            <tr>
-                                {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
-                            </tr>
+                        <tr>
+                            {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
+                        </tr>
                         </thead>
                         <tbody>
-                            {grades.map((g) => (
-                                    <tr key={g.gradeId}>
-                                    <td>{g.gradeId}</td>
-                                    <td>{g.studentName}</td>
-                                    <td>{g.studentEmail}</td>
-                                    <td><input type="text"  name="score" value={g.score}  onChange={onChange} /></td>
-                                    </tr>
-                                ))}
+                        {grades.map((g) => (
+                            <tr key={g.gradeId}>
+                                <td>{g.gradeId}</td>
+                                <td>{g.studentName}</td>
+                                <td>{g.studentEmail}</td>
+                                <td><input type="text" name="score" value={g.score} onChange={onChange} id={`score-${g.gradeId}`} /></td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="secondary" onClick={editClose}>Close</Button>
-                    <Button color="primary" onClick={onSave}>Save</Button>
+                    <Button color="secondary" onClick={editClose} id="closeButton">Close</Button>
+                    <Button color="primary" onClick={onSave} id="saveButton">Save</Button>
                 </DialogActions>
-            </Dialog> 
-        </>          
+            </Dialog>
+        </>
     );
 }
 
