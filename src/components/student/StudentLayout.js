@@ -19,8 +19,8 @@ export const StudentLayout = () => {
     <>
       <nav>
         <Link to="/">Home</Link> &nbsp;|&nbsp;   
-        <Link to="/schedule">View Class Schedule</Link>&nbsp;|&nbsp;
-        <Link to="/addCourse">Enroll in a class</Link>&nbsp;|&nbsp;
+        <Link to="/schedule" id="scheduleLink">View Class Schedule</Link>&nbsp;|&nbsp;
+        <Link to="/addCourse" id="enrollLink">Enroll in a class</Link>&nbsp;|&nbsp;
         <Link to="/studentAssignments">View Assignments</Link>&nbsp;|&nbsp;  
         <Link to="/transcript">View Transcript</Link>
       </nav>
