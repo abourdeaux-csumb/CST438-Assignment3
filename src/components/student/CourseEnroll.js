@@ -82,9 +82,9 @@ const CourseEnroll = (props) => {
         <div>
             <h3>Enroll in Courses</h3>
 
-            <h4>{message}</h4>
+
             <h4 id="message">{message}</h4>
-            <table className="Center">
+            <table className="Center" >
                 <thead>
                 <tr>
                     {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
