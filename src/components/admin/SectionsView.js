@@ -56,7 +56,8 @@ function SectionsView(props) {
     }
     
 
-    const editChange = (event) => {
+    const editChange = (
+        event) => {
         setSearch({...search,  [event.target.name]:event.target.value});
     }
 
