@@ -82,6 +82,7 @@ const CourseEnroll = (props) => {
         <div>
             <h3>Enroll in Courses</h3>
 
+
             <h4 id="message">{message}</h4>
             <table className="Center" >
                 <thead>
@@ -91,7 +92,7 @@ const CourseEnroll = (props) => {
                 </thead>
                 <tbody>
                 {sections.map((s) => (
-                        <tr key={s.secNo}>
+                    <tr key={s.secNo}>
                         <td>{s.secNo}</td>
                         <td>{s.courseId}</td>
                         <td>{s.secId}</td>
@@ -101,8 +102,8 @@ const CourseEnroll = (props) => {
                         <td>{s.room}</td>
                         <td>{s.times}</td>
                         <td><Button onClick={onEnroll}>Enroll</Button></td>
-                        </tr>
-                    ))}
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>

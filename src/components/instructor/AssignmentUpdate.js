@@ -1,78 +1,59 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { SERVER_URL } from '../../Constants';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
-//  instructor updates assignment title, dueDate
-//  use an mui Dialog
-//  issue PUT to URL  /assignments with updated assignment
+const AssignmentUpdate = (props)  => {
 
-export const handleSave = async (assignment, method) => {
-    const url = `${SERVER_URL}/assignments`;
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(assignment),
-        });
-
-        if (response.ok) {
-            return { success: true };
-        } else {
-            const errorData = await response.json();
-            return { success: false, message: errorData.message };
-        }
-    } catch (error) {
-        return { success: false, message: error.message };
-    }
-};
-
-const AssignmentUpdate = (props) => {
-    const { assignment, save } = props;
     const [open, setOpen] = useState(false);
-    const [title, setTitle] = useState(assignment.title);
-    const [dueDate, setDueDate] = useState(assignment.dueDate);
-    const [sectionNo, setSectionNo] = useState(assignment.sectionNo);
-    const [message, setMessage] = useState('');
+    const [editMessage, setEditMessage] = useState('');
+    const [assignment, setAssignment] = useState({id:'', courseId:'', secId:' ', title:'', dueDate:''});
 
-    const handleClickOpen = () => {
+    /*
+     *  dialog for edit of an assignment
+     */
+    const editOpen = () => {
         setOpen(true);
+        setEditMessage('');
+        setAssignment(props.assignment);
     };
 
-    const handleClose = () => {
+    const editClose = () => {
         setOpen(false);
-        setMessage('');
+        setAssignment({id:'', courseId:'', secId:' ', title:'', dueDate:''});
+        setEditMessage('');
     };
 
-    const handleUpdateSave = async () => {
-        const updatedAssignment = { ...assignment, title, dueDate, sectionNo };
-        const result = await handleSave(updatedAssignment, 'PUT');
-        if (result.success) {
-            setMessage('Assignment updated successfully');
-            save(updatedAssignment);
-            handleClose();
-        } else {
-            setMessage(result.message);
-        }
-    };
+    const editChange = (event) => {
+        setAssignment({...assignment,  [event.target.name]:event.target.value})
+    }
+
+    const onSave = () => {
+        props.save(assignment);
+        editClose();
+    }
 
     return (
-        <div>
-            <Button variant="outlined" color="secondary" onClick={handleClickOpen}>Edit</Button>
-            <Dialog open={open} onClose={handleClose}>
+        <>
+            <Button onClick={editOpen}>Edit</Button>
+            <Dialog open={open} >
                 <DialogTitle>Edit Assignment</DialogTitle>
-                <DialogContent>
-                    <TextField autoFocus margin="dense" id="sectionNo" label="Section No" type="text" fullWidth value={sectionNo} onChange={(e) => setSectionNo(e.target.value)} />
-                    <TextField autoFocus margin="dense" id="title" label="Title" type="text" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} />
-                    <TextField margin="dense" id="dueDate" label="Due Date" type="date" fullWidth InputLabelProps={{ shrink: true }} value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
-                    {message && <p>{message}</p>}
+                <DialogContent  style={{paddingTop: 20}} >
+                    <h4>{editMessage}</h4>
+                    <TextField style={{padding:10}} autoFocus fullWidth label="id" name="id" value={assignment.id} InputProps={{readOnly: true, }}  /> 
+                    <TextField style={{padding:10}} autoFocus fullWidth label="title" name="title" value={assignment.title} onChange={editChange}  /> 
+                    <TextField style={{padding:10}} fullWidth label="dueDate" name="dueDate" value={assignment.dueDate} onChange={editChange}  /> 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">Cancel</Button>
-                    <Button onClick={handleUpdateSave} color="primary">Save</Button>
+                    <Button color="secondary" onClick={editClose}>Close</Button>
+                    <Button color="primary" onClick={onSave}>Save</Button>
                 </DialogActions>
-            </Dialog>
-        </div>
-    );
-};
+            </Dialog> 
+        </>                       
+    )
+}
 
 export default AssignmentUpdate;
