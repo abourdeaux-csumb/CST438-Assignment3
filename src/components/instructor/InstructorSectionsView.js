@@ -1,76 +1,86 @@
-import React, {useState, useEffect} from 'react';
-import { Link } from "react-router-dom";
-import {useLocation} from 'react-router-dom';
-import {SERVER_URL} from '../../Constants';
+import React, { useState, useEffect, useCallback } from 'react';
+import { SERVER_URL } from '../../Constants';
+import { Link } from 'react-router-dom';
 
-
-const InstructorSectionsView = (props) => {
-
+const InstructorSectionsView = () => {
+    const [term, setTerm] = useState({ year: '', semester: '' });
     const [sections, setSections] = useState([]);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('Manage assignments and grades.');
 
-    const location = useLocation();
-    const {year, semester} = location.state;
-
-    const fetchSections = async (year, semester) => {
-        if (!year || year==='' || !semester || semester==='') {
-            setMessage("enter year and semester")
-        }
-        try {
-            const response = await fetch(`${SERVER_URL}/sections?email=dwisneski@csumb.edu&year=${year}&semester=${semester}`);
-            if (response.ok) {
-                const data = await response.json();
-                setSections(data);
-            } else {
-                const rc = await response.json();
-                setMessage(rc.message);
-            }
-        } catch(err) {
-            setMessage("network error "+err);
-        }
+    const onChange = (event) => {
+        setTerm({ ...term, [event.target.name]: event.target.value });
     }
 
-   useEffect( () => {
-    fetchSections(year, semester);
-    }, [year, semester ]);
+    const fetchSections = useCallback(async () => {
+        if (term.year === '' || term.semester === '') {
+            setMessage("");
+        } else {
+            try {
+                const response = await fetch(`${SERVER_URL}/sections?year=${term.year}&semester=${term.semester}&email=dwisneski@csumb.edu`);
 
-    const headers = ['secNo', 'course id', 'sec id', 'building', 'room', 'times', '', ''];
-
-    
-     
-    return(
-        <div> 
-            <h3>{message}</h3>   
-            { sections.length > 0 && 
-                <> 
-                    <h3>Sections {year} {semester} </h3>   
-                    
-                    <table className="Center" > 
-                        <thead>
-                        <tr>
-                            {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {sections.map((s) => (
-                                <tr key={s.secNo}>
-                                <td>{s.secNo}</td>
-                                <td>{s.courseId}</td>
-                                <td>{s.secId}</td>
-                                <td>{s.building}</td>
-                                <td>{s.room}</td>
-                                <td>{s.times}</td>
-                                <td><Link to="/enrollments" state={s}>Enrollments</Link></td>
-                                <td><Link to="/assignments" state={s}>Assignments</Link></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </>
+                if (response.ok) {
+                    const data = await response.json();
+                    setSections(data);
+                } else {
+                    const rc = await response.json();
+                    setMessage(rc.message);
+                }
+            } catch (err) {
+                setMessage("network error: " + err);
             }
-        </div>
+        }
+    }, [term.year, term.semester]); // dependencies
+
+    useEffect(() => {
+        fetchSections();
+    }, [fetchSections]);
+
+    return (
+        <>
+            <table className="Center">
+                <tbody>
+                <tr>
+                    <td>Year:</td>
+                    <td><input type="text" id="year" name="year" value={term.year} onChange={onChange} /></td>
+                </tr>
+                <tr>
+                    <td>Semester:</td>
+                    <td><input type="text" id="semester" name="semester" value={term.semester} onChange={onChange} /></td>
+                </tr>
+                </tbody>
+            </table>
+            <Link to='/sections' state={term}>Show Sections</Link>
+            <h4>{message}</h4>
+            <table className="Center">
+                <thead>
+                <tr>
+                    <th>SecNo</th>
+                    <th>CourseId</th>
+                    <th>SecId</th>
+                    <th>Building</th>
+                    <th>Room</th>
+                    <th>Times</th>
+                    <th>Enrollments</th>
+                    <th>Assignments</th>
+                </tr>
+                </thead>
+                <tbody>
+                {sections.map((s) => (
+                    <tr key={s.secNo}>
+                        <td>{s.secNo}</td>
+                        <td>{s.courseId}</td>
+                        <td>{s.secId}</td>
+                        <td>{s.building}</td>
+                        <td>{s.room}</td>
+                        <td>{s.times}</td>
+                        <td><Link to="/enrollments" state={s}>Enrollments</Link></td>
+                        <td><Link to="/assignments" state={s}>Assignments</Link></td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        </>
     );
 }
 
 export default InstructorSectionsView;
-
