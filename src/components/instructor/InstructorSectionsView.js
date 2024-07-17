@@ -30,30 +30,30 @@ const InstructorSectionsView = (props) => {
         }
     }
 
-    useEffect( () => {
-        fetchSections(year, semester);
+   useEffect( () => {
+    fetchSections(year, semester);
     }, [year, semester ]);
 
     const headers = ['secNo', 'course id', 'sec id', 'building', 'room', 'times', '', ''];
 
-
-
+    
+     
     return(
-        <div>
-            <h3>{message}</h3>
-            { sections.length > 0 &&
-                <>
-                    <h3>Sections {year} {semester} </h3>
-
-                    <table className="Center" >
+        <div> 
+            <h3>{message}</h3>   
+            { sections.length > 0 && 
+                <> 
+                    <h3>Sections {year} {semester} </h3>   
+                    
+                    <table className="Center" > 
                         <thead>
                         <tr>
                             {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
                         </tr>
                         </thead>
                         <tbody>
-                        {sections.map((s) => (
-                            <tr key={s.secNo}>
+                            {sections.map((s) => (
+                                <tr key={s.secNo}>
                                 <td>{s.secNo}</td>
                                 <td>{s.courseId}</td>
                                 <td>{s.secId}</td>
@@ -62,8 +62,8 @@ const InstructorSectionsView = (props) => {
                                 <td>{s.times}</td>
                                 <td><Link to="/enrollments" state={s}>Enrollments</Link></td>
                                 <td><Link to="/assignments" state={s}>Assignments</Link></td>
-                            </tr>
-                        ))}
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </>
@@ -73,3 +73,4 @@ const InstructorSectionsView = (props) => {
 }
 
 export default InstructorSectionsView;
+

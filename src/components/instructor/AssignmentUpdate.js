@@ -43,16 +43,16 @@ const AssignmentUpdate = (props)  => {
                 <DialogTitle>Edit Assignment</DialogTitle>
                 <DialogContent  style={{paddingTop: 20}} >
                     <h4>{editMessage}</h4>
-                    <TextField style={{padding:10}} autoFocus fullWidth label="id" name="id" value={assignment.id} InputProps={{readOnly: true, }}  />
-                    <TextField style={{padding:10}} autoFocus fullWidth label="title" name="title" value={assignment.title} onChange={editChange}  />
-                    <TextField style={{padding:10}} fullWidth label="dueDate" name="dueDate" value={assignment.dueDate} onChange={editChange}  />
+                    <TextField style={{padding:10}} autoFocus fullWidth label="id" name="id" value={assignment.id} InputProps={{readOnly: true, }}  /> 
+                    <TextField style={{padding:10}} autoFocus fullWidth label="title" name="title" value={assignment.title} onChange={editChange}  /> 
+                    <TextField style={{padding:10}} fullWidth label="dueDate" name="dueDate" value={assignment.dueDate} onChange={editChange}  /> 
                 </DialogContent>
                 <DialogActions>
                     <Button color="secondary" onClick={editClose}>Close</Button>
                     <Button color="primary" onClick={onSave}>Save</Button>
                 </DialogActions>
-            </Dialog>
-        </>
+            </Dialog> 
+        </>                       
     )
 }
 

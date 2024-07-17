@@ -35,14 +35,14 @@ const AssignmentGrade = (props) => {
     }
 
     const onSave = async () => {
-        try {
-            const response = await fetch (`${SERVER_URL}/grades`,
+        try { 
+            const response = await fetch (`${SERVER_URL}/grades`, 
                 {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(grades),
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                }, 
+                body: JSON.stringify(grades),
                 });
             if (response.ok) {
                 setMessage("Grades saved");
@@ -65,11 +65,11 @@ const AssignmentGrade = (props) => {
         const copy_grades = grades.map((x) => x);
         const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
         copy_grades[row_idx] = {...(copy_grades[row_idx]), score: e.target.value};
-        setGrades(copy_grades);
+        setGrades(copy_grades);   
     }
 
     const headers = ['gradeId', 'student name', 'student email', 'score' ];
-
+     
     return(
         <>
             <Button onClick={editOpen}>Grade</Button>
@@ -77,21 +77,21 @@ const AssignmentGrade = (props) => {
                 <DialogTitle>Grade Assignment</DialogTitle>
                 <DialogContent  style={{paddingTop: 20}} >
                     <h4>{message}</h4>
-                    <table className="Center" >
+                    <table className="Center" > 
                         <thead>
-                        <tr>
-                            {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
-                        </tr>
+                            <tr>
+                                {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
+                            </tr>
                         </thead>
                         <tbody>
-                        {grades.map((g) => (
-                            <tr key={g.gradeId}>
-                                <td>{g.gradeId}</td>
-                                <td>{g.studentName}</td>
-                                <td>{g.studentEmail}</td>
-                                <td><input type="text"  name="score" value={g.score}  onChange={onChange} /></td>
-                            </tr>
-                        ))}
+                            {grades.map((g) => (
+                                    <tr key={g.gradeId}>
+                                    <td>{g.gradeId}</td>
+                                    <td>{g.studentName}</td>
+                                    <td>{g.studentEmail}</td>
+                                    <td><input type="text"  name="score" value={g.score}  onChange={onChange} /></td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </DialogContent>
@@ -99,8 +99,8 @@ const AssignmentGrade = (props) => {
                     <Button color="secondary" onClick={editClose}>Close</Button>
                     <Button color="primary" onClick={onSave}>Save</Button>
                 </DialogActions>
-            </Dialog>
-        </>
+            </Dialog> 
+        </>          
     );
 }
 
