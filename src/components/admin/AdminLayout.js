@@ -15,12 +15,11 @@ export const AdminLayout = () => {
   return (
     <>
       <nav>
-        <Link to="/">Home</Link> &nbsp;|&nbsp;   
-        <Link to="/users">Users</Link>&nbsp;|&nbsp;  
-        <Link to="/courses">Courses</Link>&nbsp;|&nbsp;  
-        <Link to="/sections">Sections</Link>
+        <Link id="home" to="/">Home</Link> &nbsp;|&nbsp;
+        <Link id="users" to="/users">Users</Link>&nbsp;|&nbsp;
+        <Link id="courses" to="/courses">Courses</Link>&nbsp;|&nbsp;
+        <Link id="sections" to="/sections">Sections</Link>&nbsp;|&nbsp;
       </nav>
-
       <Outlet />
     </>
   )
