@@ -29,54 +29,53 @@ const InstructorSectionsView = () => {
                 setMessage("network error: " + err);
             }
         }
-    }, [term.year, term.semester]); // dependencies
+	}, [term.year, term.semester]); // dependencies
 
-    useEffect(() => {
-        fetchSections();
-    }, [fetchSections]);
+
+	useEffect(() => {
+		fetchSections();
+	}, [fetchSections]);
 
     return (
         <>
-            <table className="Center">
+            <table id="sectionTable" className="Center">
                 <tbody>
-                <tr>
-                    <td>Year:</td>
-                    <td><input type="text" id="year" name="year" value={term.year} onChange={onChange} /></td>
-                </tr>
-                <tr>
-                    <td>Semester:</td>
-                    <td><input type="text" id="semester" name="semester" value={term.semester} onChange={onChange} /></td>
-                </tr>
+                    <tr>
+                        <td>Year:</td>
+                        <td><input type="text" id="year" name="year" value={term.year} onChange={onChange} /></td>
+                    </tr>
+                    <tr>
+                        <td>Semester:</td>
+                        <td><input type="text" id="semester" name="semester" value={term.semester} onChange={onChange} /></td>
+                    </tr>
                 </tbody>
             </table>
             <Link to='/sections' state={term}>Show Sections</Link>
             <h4>{message}</h4>
             <table className="Center">
                 <thead>
-                <tr>
-                    <th>SecNo</th>
-                    <th>CourseId</th>
-                    <th>SecId</th>
-                    <th>Building</th>
-                    <th>Room</th>
-                    <th>Times</th>
-                    <th>Enrollments</th>
-                    <th>Assignments</th>
-                </tr>
+                    <tr>
+                        <th>SecNo</th>
+                        <th>CourseId</th>
+                        <th>SecId</th>
+                        <th>Building</th>
+                        <th>Room</th>
+                        <th>Times</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {sections.map((s) => (
-                    <tr key={s.secNo}>
-                        <td>{s.secNo}</td>
-                        <td>{s.courseId}</td>
-                        <td>{s.secId}</td>
-                        <td>{s.building}</td>
-                        <td>{s.room}</td>
-                        <td>{s.times}</td>
-                        <td><Link to="/enrollments" state={s}>Enrollments</Link></td>
-                        <td><Link to="/assignments" state={s}>Assignments</Link></td>
-                    </tr>
-                ))}
+                    {sections.map((s) => (
+                        <tr key={s.secNo}>
+                            <td>{s.secNo}</td>
+                            <td>{s.courseId}</td>
+                            <td>{s.secId}</td>
+                            <td>{s.building}</td>
+                            <td>{s.room}</td>
+                            <td>{s.times}</td>
+                            <td><Link id="enrollments" to="/enrollments" state={s}>Enrollments</Link></td>
+                            <td><Link id="assignments" to="/assignments" state={s}>Assignments</Link></td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </>
