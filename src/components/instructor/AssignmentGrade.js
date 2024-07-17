@@ -1,98 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, TextField } from '@mui/material';
-import { SERVER_URL } from '../../Constants';
+import React, { useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import {SERVER_URL} from '../../Constants';
 
-// instructor enters students' grades for an assignment
-// fetch the grades using the URL /assignment/{id}/grades
-// REST api returns a list of GradeDTO objects
-// display the list as a table with columns 'gradeId', 'student name', 'student email', 'score' 
-// score column is an input field 
-//  <input type="text" name="score" value={g.score} onChange={onChange} />
+const AssignmentGrade = (props) => {
 
-
-const AssignmentGrade = ({ assignmentId, onClose }) => {
-    const [grades, setGrades] = useState([]);
+    const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
+    const [grades, setGrades] = useState([]);
 
-    useEffect(() => {
-        fetchGrades();
-    }, []);
 
-    const fetchGrades = async () => {
+    const editOpen = () => {
+        setOpen(true);
+        setMessage('');
+        fetchGrades(props.assignment.id);
+    };
+
+    const fetchGrades = async (id) => {
         try {
-            const response = await fetch(`${SERVER_URL}/assignments/${assignmentId}/grades`);
+            const response = await fetch(`${SERVER_URL}/assignments/${id}/grades`);
             if (response.ok) {
                 const data = await response.json();
                 setGrades(data);
             } else {
-                const json = await response.json();
-                setMessage("Response error: " + json.message);
+                const rc = await response.json();
+                setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("Network error: " + err);
+            setMessage("network error "+err);
         }
-    };
+    }
 
-    const handleChange = (e, index) => {
-        const newGrades = [...grades];
-        newGrades[index].score = e.target.value ? parseInt(e.target.value, 10) : null;
-        setGrades(newGrades);
-    };
-
-    const saveGrades = async () => {
+    const onSave = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/grades`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(grades),
-            });
+            const response = await fetch (`${SERVER_URL}/grades`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(grades),
+                });
             if (response.ok) {
-                setMessage("Grades saved successfully");
-                fetchGrades();
+                setMessage("Grades saved");
             } else {
-                const json = await response.json();
-                setMessage("Response error: " + json.message);
+                const rc = await response.json();
+                setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("Network error: " + err);
+            setMessage("network error "+err);
         }
+    }
+
+    const editClose = () => {
+        setOpen(false);
+        setGrades([]);
+        setMessage('');
     };
 
-    return (
-        <Paper>
-            <h3>Assignment Grades</h3>
-            <h4>{message}</h4>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Grade ID</TableCell>
-                        <TableCell>Student Name</TableCell>
-                        <TableCell>Student Email</TableCell>
-                        <TableCell>Score</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {grades.map((g, index) => (
-                        <TableRow key={g.gradeId}>
-                            <TableCell>{g.gradeId}</TableCell>
-                            <TableCell>{g.studentName}</TableCell>
-                            <TableCell>{g.studentEmail}</TableCell>
-                            <TableCell>
-                                <TextField
-                                    type="number"
-                                    name="score"
-                                    value={g.score !== null ? g.score : ''}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <Button variant="contained" color="primary" onClick={saveGrades}>Save Grades</Button>
-            <Button variant="contained" color="secondary" onClick={onClose}>Close</Button>
-        </Paper>
+    const onChange = (e) => {
+        const copy_grades = grades.map((x) => x);
+        const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
+        copy_grades[row_idx] = {...(copy_grades[row_idx]), score: e.target.value};
+        setGrades(copy_grades);
+    }
+
+    const headers = ['gradeId', 'student name', 'student email', 'score' ];
+
+    return(
+        <>
+            <Button onClick={editOpen}>Grade</Button>
+            <Dialog open={open} >
+                <DialogTitle>Grade Assignment</DialogTitle>
+                <DialogContent  style={{paddingTop: 20}} >
+                    <h4>{message}</h4>
+                    <table className="Center" >
+                        <thead>
+                        <tr>
+                            {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {grades.map((g) => (
+                            <tr key={g.gradeId}>
+                                <td>{g.gradeId}</td>
+                                <td>{g.studentName}</td>
+                                <td>{g.studentEmail}</td>
+                                <td><input type="text"  name="score" value={g.score}  onChange={onChange} /></td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="secondary" onClick={editClose}>Close</Button>
+                    <Button color="primary" onClick={onSave}>Save</Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
-};
+}
 
 export default AssignmentGrade;

@@ -3,17 +3,17 @@ import { Outlet, Link } from "react-router-dom";
 
 const InstructorLayout = () => {
 
-  return (
-    <>
-      <nav>
-        <Link to="/">Home</Link> 
-      </nav>
-      <h1>Instructor Home</h1>
-      Manage assignments and grades.
+    return (
+        <>
+            <nav>
+                <Link to="/">Home</Link>
+            </nav>
+            <h1>Instructor Home</h1>
+            Manage assignments and grades.
 
-      <Outlet />
-    </>
-  )
+            <Outlet />
+        </>
+    )
 };
 
 export default InstructorLayout;
