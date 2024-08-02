@@ -14,8 +14,8 @@ export const StudentRouter = (props) => {
               <Route path="/" element={<StudentLayout />} >
                 <Route index element={<StudentHome />} />
                 <Route path="studentAssignments" element={<AssignmentsStudentView />} />
-                <Route path="schedule" element={<ScheduleView />} />
-                <Route path="addCourse" element={<CourseEnroll />} />
+                <Route path="schedule" id="scheduleLink" element={<ScheduleView />} />
+                <Route path="addCourse" id="enrollLink" element={<CourseEnroll />} />
                 <Route path="transcript" element={<Transcript />} />
                 <Route path="logout" element={<Logout logout={props.logout}/>} />
               </Route>

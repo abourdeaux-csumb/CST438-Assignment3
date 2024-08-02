@@ -31,7 +31,7 @@ const InstructorLayout = () => {
   return (
     <>
       <nav>
-        <Link to="/">Home</Link> &nbsp;|&nbsp; 
+        <Link id="home" to="/">Home</Link> &nbsp;|&nbsp;
         <Link id="logout" to="/logout">Logout</Link>
       </nav>
       <h1>Instructor Home</h1>
