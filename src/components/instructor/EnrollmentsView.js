@@ -13,10 +13,14 @@ const EnrollmentsView = (props) => {
     const {secNo, courseId, secId} = location.state;
 
     const fetchEnrollments = async () => {
-
         if (!secNo) return;
         try {
-            const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`);
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/sections/${secNo}/enrollments`, {
+                headers: {
+                    'Authorization': jwt
+                }
+            });
             if (response.ok) {
                 const data = await response.json();
                 setEnrollments(data);
@@ -25,7 +29,7 @@ const EnrollmentsView = (props) => {
                 setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("network error: "+err);
+            setMessage("network error: " + err);
         }
     }
 
@@ -35,15 +39,15 @@ const EnrollmentsView = (props) => {
 
     const saveGrades = async () => {
         try {
-            const response = await fetch (
-                `${SERVER_URL}/enrollments`,
-                {
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/enrollments`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': jwt,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(enrollments),
-                });
+            });
             if (response.ok) {
                 setMessage("Grades saved");
                 fetchEnrollments();
@@ -52,7 +56,7 @@ const EnrollmentsView = (props) => {
                 setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("network error: "+err);
+            setMessage("network error: " + err);
         }
     }
 
