@@ -1,81 +1,144 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { SERVER_URL } from '../../Constants';
+import React, {useState, useEffect} from 'react';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import Button from '@mui/material/Button';
+import {SERVER_URL} from '../../Constants';
 
-const StudentAssignmentsView = (props) => {
-    const [assignments, setAssignments] = useState([]);
-    const [search, setSearch] = useState({year:'', semester:''});
-    const [message, setMessage] = useState('');
+// student can view schedule of sections 
+// use the URL /enrollment?studentId=3&year= &semester=
+// The REST api returns a list of EnrollmentDTO objects
+// studentId=3 will be removed in assignment 7
 
-    const fetchAssignments = useCallback(async () => {
-        if (search.year === '' || search.semester === '') {
-            setMessage("Enter search parameters");
-        } else {
+// to drop a course 
+// issue a DELETE with URL /enrollment/{enrollmentId}
+
+const ScheduleView = (props) => {
+      const headers = ['Year', 'Semester', 'CourseId', 'Title', 'SecNo', 'Building', 'Room', 'Times', 'Credits', ''];
+
+      const [enrollments, setEnrollments] = useState([]);
+
+      const [search, setSearch] = useState({year:'', semester:''});
+
+      const [message, setMessage] = useState('');
+
+      const fetchEnrollments = async () => {
+          if (search.year === '' || search.semester === '') {
+              setMessage("Enter search parameters");
+          } else {
             try {
-                const jwt = sessionStorage.getItem('jwt');
-                const response = await fetch(`${SERVER_URL}/assignments?year=${search.year}&semester=${search.semester}`, {
-                    headers: {
-                        'Authorization': jwt
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setAssignments(data);
-                } else {
-                    const rc = await response.json();
-                    setMessage(rc.message);
+              const jwt = sessionStorage.getItem('jwt');
+              const response = await fetch(`${SERVER_URL}/enrollments?year=${search.year}&semester=${search.semester}`, {
+                headers: {
+                  'Authorization': jwt
                 }
+              });
+              if (response.ok) {
+                const data = await response.json();
+                setEnrollments(data);
+              } else {
+                const rc = await response.json();
+                setMessage(rc.message);
+              }
             } catch(err) {
-                setMessage("network error: " + err);
+              setMessage("network error: " + err);
             }
-        }
-    }, [search.year, search.semester]);
+          }
+      }
 
-    const handleSearchChange = (event) => {
-        setSearch({...search, [event.target.name]: event.target.value});
+     useEffect( () => {
+       fetchEnrollments();
+     },  []);
+
+    const deleteEnrollment = async (enrollmentId) => {
+      try {
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/enrollments/${enrollmentId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.ok) {
+          setMessage("Enrollment dropped");
+          fetchEnrollments();
+        } else {
+          const rc = await response.json();
+          setMessage(rc.message);
+        }
+      } catch (err) {
+        setMessage("network error: " + err);
+      }
     }
 
-    useEffect(() => {
-        fetchAssignments();
-    }, [fetchAssignments]);
+    const editChange = (event) => {
+        setSearch({...search,  [event.target.name]:event.target.value});
+    }
 
-    return(
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <h3>Assignments</h3>
-            <h4>{message}</h4>
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '250px', marginBottom: '10px'}}>
-                    <label>Year:</label>
-                    <input type="text" name="year" onChange={handleSearchChange}/>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '250px', marginBottom: '10px'}}>
-                    <label>Semester:</label>
-                    <input type="text" name="semester" onChange={handleSearchChange}/>
-                </div>
-                <br/>
-            </div>
-            <br/>
-            <table className="Center">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Title</th>
-                        <th>DueDate</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {assignments.map((assignment) => (
-                        <tr key={assignment.id}>
-                            <td>{assignment.courseId}</td>
-                            <td>{assignment.title}</td>
-                            <td>{assignment.dueDate}</td>
-                            <td>{assignment.score}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+    const onDelete = (e) => {
+      const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
+      const enrollmentId = enrollments[row_idx].enrollmentId;
+      confirmAlert({
+          title: 'Confirm to drop course',
+          message: 'Do you really want to drop this course?',
+          buttons: [
+            {
+              label: 'Yes',
+              onClick: () => deleteEnrollment(enrollmentId)
+            },
+            {
+              label: 'No',
+            }
+          ]
+        });
+    }
+
+     return(
+         <div>
+             <h3>Schedule</h3>
+
+             <h4>{message}</h4>
+             <h4>Enter year and semester.  Example 2024 Spring</h4>
+             <table className="Center">
+                 <tbody>
+                 <tr>
+                     <td>Year:</td>
+                     <td><input type="text" id="syear" name="year" value={search.year} onChange={editChange} /></td>
+                 </tr>
+                 <tr>
+                     <td>Semester:</td>
+                     <td><input type="text" id="ssemester" name="semester" value={search.semester} onChange={editChange} /></td>
+                 </tr>
+                 </tbody>
+             </table>
+             <br/>
+             <button type="submit" id="search" onClick={fetchEnrollments} >Search for Enrollments</button>
+             <table className="Center" >
+                 <thead>
+                 <tr>
+                     {headers.map((e, idx) => (<th key={idx}>{e}</th>))}
+                 </tr>
+                 </thead>
+                 <tbody>
+                 {enrollments.map((e) => (
+                         <tr key={e.enrollmentId}>
+                         <td>{e.year}</td>
+                         <td>{e.semester}</td>
+                         <td>{e.courseId}</td>
+                         <td>{e.title}</td>
+                         <td>{e.sectionNo}</td>
+                         <td>{e.building}</td>
+                         <td>{e.room}</td>
+                         <td>{e.times}</td>
+                         <td>{e.credits}</td>
+                         <td><Button onClick={onDelete}>DROP</Button></td>
+                         </tr>
+                     ))}
+                 </tbody>
+             </table>
+         </div>
+     )
+
 }
 
-export default StudentAssignmentsView;
+export default ScheduleView;
