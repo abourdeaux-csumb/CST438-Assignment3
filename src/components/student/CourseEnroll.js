@@ -20,7 +20,12 @@ const CourseEnroll = (props) => {
 
      const fetchOpenSections = async () => {
        try {
-         const response = await fetch(`${SERVER_URL}/sections/open`);
+         const jwt = sessionStorage.getItem('jwt');
+         const response = await fetch(`${SERVER_URL}/sections/open`, {
+           headers: {
+             'Authorization': jwt
+           }
+         });
          if (response.ok) {
            const data = await response.json();
            setSections(data);
@@ -29,7 +34,7 @@ const CourseEnroll = (props) => {
            setMessage(rc.message);
          }
        } catch(err) {
-         setMessage("network error: "+err);
+         setMessage("network error: " + err);
        }
      }
 
@@ -39,10 +44,11 @@ const CourseEnroll = (props) => {
 
      const enroll = async (secNo) => {
        try {
-         const response = await fetch (`${SERVER_URL}/enrollments/sections/${secNo}?studentId=3`,
-         {
+         const jwt = sessionStorage.getItem('jwt');
+         const response = await fetch(`${SERVER_URL}/enrollments/sections/${secNo}`, {
            method: 'POST',
            headers: {
+             'Authorization': jwt,
              'Content-Type': 'application/json',
              'Access-Control-Allow-Origin': '*'
            },
@@ -55,7 +61,7 @@ const CourseEnroll = (props) => {
            setMessage(rc.message);
          }
        } catch (err) {
-         setMessage("network error: "+err);
+         setMessage("network error: " + err);
        }
      }
 
