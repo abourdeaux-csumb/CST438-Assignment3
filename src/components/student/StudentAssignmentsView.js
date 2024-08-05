@@ -7,11 +7,16 @@ const StudentAssignmentsView = (props) => {
     const [message, setMessage] = useState('');
 
     const fetchAssignments = useCallback(async () => {
-        if (search.year==='' || search.semester==='') {
+        if (search.year === '' || search.semester === '') {
             setMessage("Enter search parameters");
         } else {
             try {
-                const response = await fetch(`${SERVER_URL}/assignments?studentId=3&year=${search.year}&semester=${search.semester}`);
+                const jwt = sessionStorage.getItem('jwt');
+                const response = await fetch(`${SERVER_URL}/assignments?year=${search.year}&semester=${search.semester}`, {
+                    headers: {
+                        'Authorization': jwt
+                    }
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setAssignments(data);
@@ -20,7 +25,7 @@ const StudentAssignmentsView = (props) => {
                     setMessage(rc.message);
                 }
             } catch(err) {
-                setMessage("network error: " +err);
+                setMessage("network error: " + err);
             }
         }
     }, [search.year, search.semester]);
