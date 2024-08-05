@@ -13,18 +13,23 @@ function CoursesView(props) {
 
     const [ message, setMessage ] = useState('');
 
-    const  fetchCourses = async () => {
+    const fetchCourses = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/courses`);
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/courses`, {
+          headers: {
+            'Authorization': jwt
+          }
+        });
         if (response.ok) {
           const courses = await response.json();
           setCourses(courses);
         } else {
           const json = await response.json();
-          setMessage("response error: "+json.message);
+          setMessage("response error: " + json.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }  
     }
 
@@ -34,66 +39,69 @@ function CoursesView(props) {
 
     const saveCourse = async (course) => {
       try {
-        const response = await fetch (`${SERVER_URL}/courses`, 
-            {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              }, 
-              body: JSON.stringify(course),
-            });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/courses`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(course),
+        });
         if (response.ok) {
-          setMessage("course saved")
+          setMessage("course saved");
           fetchCourses();
         } else {
           const json = await response.json();
-          setMessage("response error: "+json.message);
+          setMessage("response error: " + json.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
 
     const addCourse = async (course) => {
       try {
-        const response = await fetch (`${SERVER_URL}/courses`, 
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              }, 
-              body: JSON.stringify(course),
-            });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/courses`, {
+          method: 'POST',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(course),
+        });
         if (response.ok) {
-          setMessage("course added")
+          setMessage("course added");
           fetchCourses();
         } else {
           const rc = await response.json();
           setMessage(rc.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
 
     const deleteCourse = async (courseId) => {
       try {
-        const response = await fetch (`${SERVER_URL}/courses/${courseId}`, 
-            {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-              }, 
-            });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/courses/${courseId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+        });
         if (response.ok) {
           setMessage("Course deleted");
           fetchCourses();
         } else {
           const rc = await response.json();
-          setMessage("Delete failed "+rc.message);
+          setMessage("Delete failed " + rc.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
     
