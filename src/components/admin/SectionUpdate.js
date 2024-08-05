@@ -41,12 +41,14 @@ const SectionUpdate = (props)  => {
 
     const saveSection = async (section) => {
         try {
-          const response = await fetch (`${SERVER_URL}/sections`, 
+          const jwt = sessionStorage.getItem('jwt');
+          const response = await fetch(`${SERVER_URL}/sections`,
             {
               method: 'PUT',
               headers: {
+                'Authorization': jwt,
                 'Content-Type': 'application/json',
-              }, 
+              },
               body: JSON.stringify(section),
             });
           if (response.ok) {
@@ -56,7 +58,7 @@ const SectionUpdate = (props)  => {
             setEditMessage(rc.message);
           }
         } catch (err) {
-          setEditMessage("network error: "+err);
+          setEditMessage("network error: " + err);
         }
       }
 
