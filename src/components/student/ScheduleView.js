@@ -22,11 +22,16 @@ const ScheduleView = (props) => {
       const [message, setMessage] = useState('');
 
       const fetchEnrollments = async () => {
-          if (search.year==='' || search.semester==='') {
+          if (search.year === '' || search.semester === '') {
               setMessage("Enter search parameters");
           } else {
             try {
-              const response = await fetch(`${SERVER_URL}/enrollments?studentId=3&year=${search.year}&semester=${search.semester}`);
+              const jwt = sessionStorage.getItem('jwt');
+              const response = await fetch(`${SERVER_URL}/enrollments?year=${search.year}&semester=${search.semester}`, {
+                headers: {
+                  'Authorization': jwt
+                }
+              });
               if (response.ok) {
                 const data = await response.json();
                 setEnrollments(data);
@@ -35,7 +40,7 @@ const ScheduleView = (props) => {
                 setMessage(rc.message);
               }
             } catch(err) {
-              setMessage("network error: "+err);
+              setMessage("network error: " + err);
             }
           }
       }
@@ -46,10 +51,11 @@ const ScheduleView = (props) => {
 
     const deleteEnrollment = async (enrollmentId) => {
       try {
-        const response = await fetch (`${SERVER_URL}/enrollments/${enrollmentId}`,
-        {
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/enrollments/${enrollmentId}`, {
           method: 'DELETE',
           headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json',
           },
         });
@@ -61,7 +67,7 @@ const ScheduleView = (props) => {
           setMessage(rc.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
 
