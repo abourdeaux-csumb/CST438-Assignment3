@@ -18,18 +18,22 @@ const AssignmentsView = (props) => {
 
 
     const fetchAssignments = async () => {
-       
       try {
-        const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`);
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/sections/${secNo}/assignments`, {
+          headers: {
+            'Authorization': jwt
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           setAssignments(data);
         } else {
           const rc = await response.json();
-          setMessage("fetch error "+rc.message);
+          setMessage("fetch error " + rc.message);
         }
       } catch (err) {
-        setMessage("network error "+err);
+        setMessage("network error " + err);
       }
     }
 
@@ -41,32 +45,36 @@ const AssignmentsView = (props) => {
         assignment.courseId = courseId;
         assignment.secId = secId;
         assignment.secNo = secNo;
-        fetch (`${SERVER_URL}/assignments`, 
+        const jwt = sessionStorage.getItem('jwt');
+        fetch(`${SERVER_URL}/assignments`,
         {
           method: 'POST',
           headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json',
-          }, 
+          },
           body: JSON.stringify(assignment),
         })
-        .then(response => response.json() )
+        .then(response => response.json())
         .then(data => {
-            setMessage("Assignment created id="+data.id);
+            setMessage("Assignment created id=" + data.id);
             fetchAssignments();
         })
         .catch(err => setMessage(err));
     }
 
     const save = (assignment) => {
-        fetch (`${SERVER_URL}/assignments`, 
+        const jwt = sessionStorage.getItem('jwt');
+        fetch(`${SERVER_URL}/assignments`,
         {
           method: 'PUT',
           headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json',
-          }, 
+          },
           body: JSON.stringify(assignment),
         })
-        .then(response => response.json() )
+        .then(response => response.json())
         .then(data => {
             setMessage("Assignment saved");
             fetchAssignments();
@@ -78,12 +86,14 @@ const AssignmentsView = (props) => {
     const doDelete = (e) => {
         const row_idx = e.target.parentNode.parentNode.rowIndex - 1;
         const id = assignments[row_idx].id;
-        fetch (`${SERVER_URL}/assignments/${id}`, 
+        const jwt = sessionStorage.getItem('jwt');
+        fetch(`${SERVER_URL}/assignments/${id}`,
         {
           method: 'DELETE',
           headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json',
-          }, 
+          },
         })
         .then(response => {
             if (response.ok) {
@@ -92,7 +102,6 @@ const AssignmentsView = (props) => {
             } else {
                 setMessage("Delete failed");
             }
-            
         })
         .catch(err => setMessage(err));
     }

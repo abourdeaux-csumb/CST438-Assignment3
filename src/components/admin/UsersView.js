@@ -13,18 +13,23 @@ function UsersView(props) {
 
     const [message, setMessage] = useState('');
 
-    const  fetchUsers = async () => {
+    const fetchUsers = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/users`);
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/users`, {
+          headers: {
+            'Authorization': jwt
+          }
+        });
         if (response.ok) {
           const users = await response.json();
           setUsers(users);
         } else {
           const json = await response.json();
-          setMessage("response error: "+json.message);
+          setMessage("response error: " + json.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }  
     }
 
@@ -34,67 +39,70 @@ function UsersView(props) {
 
     const saveUser = async (user) => {
       try {
-        const response = await fetch(`${SERVER_URL}/users`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            }, 
-            body: JSON.stringify(user),
-          });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/users`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(user),
+        });
         if (response.ok) {
-          setMessage("user saved")
+          setMessage("user saved");
           fetchUsers();
         } else {
           const rc = await response.json();
           setMessage(rc.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }   
     }
 
     const addUser = async (user) => {
       try {
-        const response = await  fetch(`${SERVER_URL}/users`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            }, 
-            body: JSON.stringify(user),
-          });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/users`, {
+          method: 'POST',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(user),
+        });
         if (response.ok) {
           const newuser = await response.json();
-          setMessage("user added id="+newuser.id);
+          setMessage("user added id=" + newuser.id);
           fetchUsers();
         } else {
           const rc = await response.json();
           setMessage(rc.message);
         }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
 
     const deleteUser = async (id) => {
       try {
-        const response = await fetch(`${SERVER_URL}/users/${id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            }, 
-          });
+        const jwt = sessionStorage.getItem('jwt');
+        const response = await fetch(`${SERVER_URL}/users/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': jwt,
+            'Content-Type': 'application/json',
+          },
+        });
         if (response.ok) {
           setMessage("User deleted");
           fetchUsers();
         } else {
           const rc = await response.json();
           setMessage(rc.message);
-        } 
+        }
       } catch (err) {
-        setMessage("network error: "+err);
+        setMessage("network error: " + err);
       }
     }
 

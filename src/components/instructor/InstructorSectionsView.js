@@ -16,7 +16,12 @@ const InstructorSectionsView = () => {
             setMessage("");
         } else {
             try {
-                const response = await fetch(`${SERVER_URL}/sections?year=${term.year}&semester=${term.semester}&email=dwisneski@csumb.edu`);
+                const jwt = sessionStorage.getItem('jwt');
+                const response = await fetch(`${SERVER_URL}/sections?year=${term.year}&semester=${term.semester}`, {
+                    headers: {
+                        'Authorization': jwt
+                    }
+                });
 
                 if (response.ok) {
                     const data = await response.json();
@@ -29,7 +34,7 @@ const InstructorSectionsView = () => {
                 setMessage("network error: " + err);
             }
         }
-	}, [term.year, term.semester]); // dependencies
+    }, [term.year, term.semester]); // dependencies
 
 
 	useEffect(() => {

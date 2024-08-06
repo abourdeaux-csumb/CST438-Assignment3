@@ -11,12 +11,16 @@ const Transcript = (props) => {
   const headers = ['Year', 'Semester', 'CourseId',  'SectionId', 'Title', 'Credits', 'Grade'];
 
   const [transcripts, setTranscripts] = useState([]);
-
   const [message, setMessage] = useState('');
 
   const fetchTranscripts = async () => {
     try {
-      const response = await fetch(`${SERVER_URL}/transcripts?studentId=3`);
+      const jwt = sessionStorage.getItem('jwt');
+      const response = await fetch(`${SERVER_URL}/transcripts`, {
+        headers: {
+          'Authorization': jwt
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setTranscripts(data);
@@ -25,7 +29,7 @@ const Transcript = (props) => {
         setMessage(rc.message);
       }
     } catch(err) {
-      setMessage("network error: "+err);
+      setMessage("network error: " + err);
     }
   }
 

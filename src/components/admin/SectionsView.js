@@ -16,11 +16,16 @@ function SectionsView(props) {
     const [message, setMessage] = useState('');
 
     const fetchSections = async () => {
-        if (search.courseId==='' || search.year==='' || search.semester==='' ) {
+        if (search.courseId === '' || search.year === '' || search.semester === '') {
             setMessage("Enter search parameters");
         } else {
             try {
-                const response = await fetch(`${SERVER_URL}/courses/${search.courseId}/sections?year=${search.year}&semester=${search.semester}`);
+                const jwt = sessionStorage.getItem('jwt');
+                const response = await fetch(`${SERVER_URL}/courses/${search.courseId}/sections?year=${search.year}&semester=${search.semester}`, {
+                    headers: {
+                        'Authorization': jwt
+                    }
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setSections(data);
@@ -29,20 +34,21 @@ function SectionsView(props) {
                     setMessage(rc.message);
                 }
             } catch(err) {
-                setMessage("network error: "+err);
+                setMessage("network error: " + err);
             }
         }
     }
 
     const deleteSection = async (secNo) => {
         try {
-            const response = await fetch (`${SERVER_URL}/sections/${secNo}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+            const jwt = sessionStorage.getItem('jwt');
+            const response = await fetch(`${SERVER_URL}/sections/${secNo}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': jwt,
+                    'Content-Type': 'application/json',
+                },
+            });
             if (response.ok) {
                 setMessage("Section deleted");
                 fetchSections();
@@ -51,7 +57,7 @@ function SectionsView(props) {
                 setMessage(rc.message);
             }
         } catch (err) {
-            setMessage("network error: "+err);
+            setMessage("network error: " + err);
         }
     }
 
